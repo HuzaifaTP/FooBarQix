@@ -8,16 +8,22 @@ const divisorValueDictionary = [
 
 const conditionFunctions = {
     isValueDivisibleByDivisor: (val) => ({ divisor }) => val % divisor === 0,
-    isDigitEqualToDivisor: (digit) => ({ divisor }) => divisor.divisor == digit,
+    isDigitEqualToDivisor: (digit) => ({ divisor }) => divisor.toString() === digit,
 }
-const processRules = (conditionFunction) => (currentAccumulated, currentDivisor) => {
+
+const processRules = (conditionFunction,actionFunction) => (currentAccumulated, currentDivisor) => {
     if(conditionFunction(currentDivisor)){
-        currentAccumulated+=currentDivisor.value
+        return actionFunction(currentAccumulated,currentDivisor)
     }
     return currentAccumulated
+
 }
 const processValue = (val) => {
-    return divisorValueDictionary.reduce(processRules(conditionFunctions.isValueDivisibleByDivisor(val)),"")
+    const processValueActionFunction = (currentAccumulated,currentDivisor)=>{
+       currentAccumulated += currentDivisor.value
+        return currentAccumulated
+    }
+    return divisorValueDictionary.reduce(processRules(conditionFunctions.isValueDivisibleByDivisor(val),processValueActionFunction),"")
 };
 
 const processDigits = (val) =>{
@@ -29,7 +35,11 @@ const processDigits = (val) =>{
     return result;
 }
 const processDigit = (digit)=>{
-    return divisorValueDictionary.reduce(processRules(conditionFunctions.isDigitEqualToDivisor(digit),""))
+    const processDigitActionFunction = (currentAccumulated,currentDivisor)=>{
+            currentAccumulated = currentDivisor.value
+        return currentAccumulated
+    }
+    return divisorValueDictionary.reduce(processRules(conditionFunctions.isDigitEqualToDivisor(digit),processDigitActionFunction),"")
 }
 
 function compute(val){
