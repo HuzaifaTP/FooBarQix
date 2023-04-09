@@ -6,16 +6,18 @@ const divisorValueDictionary = [
     { divisor: 7, value: "Qix" },
 ]
 
-const processValue = (val) => {
-
-    const valueAccumulater = (currentAccumulatedValue,currentDivisor) =>{
-        if(val%currentDivisor.divisor===0){
-            currentAccumulatedValue+=currentDivisor.value
-        }
-        return currentAccumulatedValue
+const conditionFunctions = {
+    isValueDivisibleByDivisor: (val) => ({ divisor }) => val % divisor === 0,
+    isDigitEqualToDivisor: (digit) => ({ divisor }) => divisor.divisor == digit,
+}
+const processRules = (conditionFunction) => (currentAccumulated, currentDivisor) => {
+    if(conditionFunction(currentDivisor)){
+        currentAccumulated+=currentDivisor.value
     }
-
-    return divisorValueDictionary.reduce(valueAccumulater,"")
+    return currentAccumulated
+}
+const processValue = (val) => {
+    return divisorValueDictionary.reduce(processRules(conditionFunctions.isValueDivisibleByDivisor(val)),"")
 };
 
 const processDigits = (val) =>{
@@ -27,13 +29,7 @@ const processDigits = (val) =>{
     return result;
 }
 const processDigit = (digit)=>{
-    const digitAccumulator = (currentAccumulatedDigit,currentDivisor) =>{
-        if(currentDivisor.divisor.toString() === digit){
-            currentAccumulatedDigit = currentDivisor.value
-        }
-        return currentAccumulatedDigit
-    }
-    return divisorValueDictionary.reduce(digitAccumulator,"")
+    return divisorValueDictionary.reduce(processRules(conditionFunctions.isDigitEqualToDivisor(digit),""))
 }
 
 function compute(val){
